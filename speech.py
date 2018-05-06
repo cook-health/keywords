@@ -228,14 +228,12 @@ def listen_print_loop(responses, stream, speech_buffer):
 
 def process_responses():
     while True:
-        speech_buffer = [None, None]
-        speech_buffer[0] = speech_queue.get()
-        speech_buffer[1] = speech_queue.get()
+        speech_buffer = speech_queue.get()
 
-        if None in speech_buffer:
+        if speech_buffer == None:
             break
         else:
-            transcript_full = speech_buffer[0] + speech_buffer[1]
+            transcript_full = speech_buffer
             print("Transcript: " + transcript_full)
             result = recog.dataprocess(transcript_full)
             print("Keywords: ")

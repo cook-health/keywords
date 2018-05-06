@@ -55,6 +55,9 @@ def textrecog(text_list):
                 result[shorter[i]] = shorter[choose]
     return result
 
+"""
+Returns a dictionary of (keyword, location)
+"""
 def dataprocess(text):
     text_list = text.split()
     result = textrecog(text_list)
