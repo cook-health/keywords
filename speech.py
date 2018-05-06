@@ -225,7 +225,7 @@ def listen_print_loop(responses, stream, speech_buffer):
         else:
             speech_buffer.put(transcript)
             num_chars_printed = 0
-
+ret = {}
 def process_responses():
     while True:
         speech_buffer = speech_queue.get()
@@ -239,7 +239,7 @@ def process_responses():
             print("Keywords: ")
             for k, v in result.items():
                 print(k, v)
-
+                ret[k] = v
             speech_queue.task_done()
 
 def main(sample_rate, audio_src):
