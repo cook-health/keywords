@@ -3,8 +3,8 @@ positive = [x[0:-1].lower() for x in open('positive-words.txt', 'r')]
 negative = [x[0:-1].lower() for x in open('negative-words.txt', 'r')]
 keywords.append('feel')
 freq = ['before','after','meal','1','2','3','4','5','6','7','8','9','10','11','12','per','day','days','hour','hours','minite','a','once','twice','times','time','daily','15','half','an']
-test = [x[0:-1] for x in open('drug.txt','r')]
-disease = [x[0:-1] for x in open('disease.txt','r')]
+test = [x[0:-1] for x in open('drug.txt','r',encoding = 'utf-8',errors = 'ignore')]
+disease = [x[0:-1] for x in open('disease.txt','r',encoding = 'utf-8')]
 
 def textrecog(text_list):
     shorter = []
@@ -92,5 +92,3 @@ def dataprocess(text):
         if e not in result.keys():
             result[e] = True
     return result
-print(dataprocess('insulin eat like in before meal 3 times per day'))
-print(dataprocess('flu has'))

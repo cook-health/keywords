@@ -19,6 +19,9 @@ import pyaudio
 from six.moves import queue
 import six
 
+speech_queue = queue.Queue()
+ret = {}
+
 def duration_to_secs(duration):
     return duration.seconds + (duration.nanos / float(1e9))
 
@@ -224,7 +227,6 @@ def listen_print_loop(responses, stream, speech_buffer):
             speech_buffer.put(transcript)
             num_chars_printed = 0
 
-ret = {}
 def process_responses(speech_queue):
     while True:
         speech_buffer = speech_queue.get()
@@ -241,8 +243,7 @@ def process_responses(speech_queue):
                 ret[k] = v
             speech_queue.task_done()
 
-""" NOTE: Blocking """
-def run(sample_rate, audio_src, speech_queue):
+def main(sample_rate, audio_src):
     language_code = 'en-US'
 
     t = threading.Thread(target=process_responses(speech_queue))
@@ -294,5 +295,13 @@ def run(sample_rate, audio_src, speech_queue):
                 resume = True
 
     speech_queue.put(None)
-    speech_queue.put(None)
     t.join()
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('--rate', default=16000, help='Sample rate.', type=int)
+    parser.add_argument('--audio_src', help='File to simulate streaming of.')
+    args = parser.parse_args()
+    main(args.rate, args.audio_src)
