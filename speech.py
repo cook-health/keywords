@@ -10,6 +10,7 @@ import threading
 import time
 import recog
 import queue
+import pickle
 
 from google.cloud import speech
 from google.cloud.speech import enums
@@ -227,7 +228,7 @@ def listen_print_loop(responses, stream, speech_buffer):
             speech_buffer.put(transcript)
             num_chars_printed = 0
 
-def process_responses(speech_queue):
+def process_responses():
     while True:
         speech_buffer = speech_queue.get()
 
@@ -235,12 +236,12 @@ def process_responses(speech_queue):
             break
         else:
             transcript_full = speech_buffer
-            print("Transcript: " + transcript_full)
             result = recog.dataprocess(transcript_full)
-            print("Keywords: ")
-            for k, v in result.items():
-                print(k, v)
-                ret[k] = v
+            
+            output_file = open('output.log', 'a+')
+            output_file.write("Transcript:" + transcript_full)
+            output_file.write("results:" + pickle.dumps(result))
+            
             speech_queue.task_done()
 
 def main(sample_rate, audio_src):
