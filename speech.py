@@ -246,7 +246,7 @@ def process_responses(speech_queue):
 def main(sample_rate, audio_src):
     language_code = 'en-US'
 
-    t = threading.Thread(target=process_responses(speech_queue))
+    t = threading.Thread(target=process_responses)
     t.start()
 
     client = speech.SpeechClient()
