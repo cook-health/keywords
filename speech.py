@@ -95,11 +95,11 @@ class ResumableMicrophoneStream(MicrophoneStream):
 
         # Some useful numbers
         # 2 bytes in 16 bit samples
-        self._bytes_per_sample = 2 * self._num_channels
-        self._bytes_per_second = self._rate * self._bytes_per_sample
+        self._bytes_per_sample = int(2 * self._num_channels)
+        self._bytes_per_second = int(self._rate * self._bytes_per_sample)
 
-        self._bytes_per_chunk = (self._chunk_size * self._bytes_per_sample)
-        self._chunks_per_second = (
+        self._bytes_per_chunk = int(self._chunk_size * self._bytes_per_sample)
+        self._chunks_per_second = int(
                 self._bytes_per_second / self._bytes_per_chunk)
         self._untranscribed = collections.deque(
                 maxlen=self._max_replay_secs * self._chunks_per_second)
@@ -214,13 +214,12 @@ def listen_print_loop(responses, stream):
         overwrite_chars = ' ' * (num_chars_printed - len(transcript))
 
         if not result.is_final:
-#            sys.stdout.write(transcript + overwrite_chars + '\r')
-#            sys.stdout.flush()
+            # sys.stdout.write(transcript + overwrite_chars + '\r')
+            # sys.stdout.flush()
 
-#            num_chars_printed = len(transcript)
+            num_chars_printed = len(transcript)
         else:
-#            print(transcript + overwrite_chars)
-
+            print(transcript + overwrite_chars)
 
             num_chars_printed = 0
 

@@ -4,7 +4,7 @@ Then uses heuristics to identify the most relevant keywords for display
 in the Cook-Health UI.
 
 # Usage
-First have the python and portaudio development libraries installed
+First have the python 3 and portaudio development libraries installed
 ```
 > sudo apt update && sudo apt install python-all-dev portaudio19-dev
 ```
