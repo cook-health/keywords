@@ -8,6 +8,7 @@ import re
 import sys
 import threading
 import time
+import recog
 
 from google.cloud import speech
 from google.cloud.speech import enums
@@ -219,7 +220,11 @@ def listen_print_loop(responses, stream):
 
             num_chars_printed = len(transcript)
         else:
-            print(transcript + overwrite_chars)
+            print("Transcript: " + transcript)
+            result = recog.dataprocess(transcript)
+            print("Keywords: ")
+            for k, v in result.items():
+                print(k, v)
 
             num_chars_printed = 0
 
@@ -270,7 +275,6 @@ def main(sample_rate, audio_src):
                         raise
 
                 resume = True
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
