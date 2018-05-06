@@ -2,7 +2,7 @@ keywords = [x[0:-1].lower() for x in open('wordlist_selected.txt', 'r')]
 positive = [x[0:-1].lower() for x in open('positive-words.txt', 'r')]
 negative = [x[0:-1].lower() for x in open('negative-words.txt', 'r')]
 keywords.append('feel')
-freq = ['before','after','meal','1','2','3','4','5','6','7','8','9','10','11','12','per','day','days','hour','hours','minute','once','twice','times','time','daily','15','half']
+freq = ['before','after','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','fifteen','meal','1','2','3','4','5','6','7','8','9','10','11','12','per','day','days','hour','hours','minute','once','twice','times','time','daily','15','half']
 test = [x[0:-1] for x in open("drug.txt", mode='r', errors='ignore')]
 disease = [x[0:-1] for x in open('disease.txt','r',encoding = 'utf-8')]
 
@@ -17,20 +17,21 @@ def textrecog(text_list):
     record = 0
     for word in text_list:
         for t in disease:
-            if word in t.split(' '):
+            if len(word) > 3 and word in t.split(' '):
                 result[word] = 'diagnose'
                 break
     for index in range(len(text_list)):
-        shorter.append(text_list[index])
+        if len(text_list[index]) > 1:
+            shorter.append(text_list[index])
         if text_list[index] in test:
             mode = True
             record = index
     if mode:
         d = ''
-        for i in shorter[record:]:
+        for i in text_list[record:]:
             if i in freq:
                 d = d + i + ' '
-        result[shorter[record]] = d
+        result[text_list[record]] = d
     else:
         for i in range(len(shorter)):
             w = shorter[i]
