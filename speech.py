@@ -240,7 +240,7 @@ def process_responses():
             
             output_file = open('output.log', 'a+')
             output_file.write("Transcript:" + transcript_full)
-            output_file.write("results:" + pickle.dumps(result))
+            pickle.dump(result, output_file, protocol=pickle.HIGHEST_PROTOCOL)
             
             speech_queue.task_done()
 
