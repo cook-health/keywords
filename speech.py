@@ -257,7 +257,7 @@ def main(sample_rate, audio_src):
                 # Now, put the transcription responses to use.
                 listen_print_loop(responses, stream)
                 break
-            except grpc.RpcError, e:
+            except grpc.RpcError as e:
                 if e.code() not in (grpc.StatusCode.INVALID_ARGUMENT,
                                     grpc.StatusCode.OUT_OF_RANGE):
                     raise
