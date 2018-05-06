@@ -78,6 +78,9 @@ def textrecog(text_list):
                 empty.append(shorter[choose])
     return (result,empty)
 
+"""
+Returns a dictionary of (keyword, location)
+"""
 def dataprocess(text):
     text_list = text.split()
     result, empty = textrecog(text_list)

@@ -19,8 +19,6 @@ import pyaudio
 from six.moves import queue
 import six
 
-speech_queue = queue.Queue()
-
 def duration_to_secs(duration):
     return duration.seconds + (duration.nanos / float(1e9))
 
@@ -226,28 +224,28 @@ def listen_print_loop(responses, stream, speech_buffer):
             speech_buffer.put(transcript)
             num_chars_printed = 0
 
-def process_responses():
+ret = {}
+def process_responses(speech_queue):
     while True:
-        speech_buffer = [None, None]
-        speech_buffer[0] = speech_queue.get()
-        speech_buffer[1] = speech_queue.get()
+        speech_buffer = speech_queue.get()
 
-        if None in speech_buffer:
+        if speech_buffer == None:
             break
         else:
-            transcript_full = speech_buffer[0] + speech_buffer[1]
+            transcript_full = speech_buffer
             print("Transcript: " + transcript_full)
             result = recog.dataprocess(transcript_full)
             print("Keywords: ")
             for k, v in result.items():
                 print(k, v)
-
+                ret[k] = v
             speech_queue.task_done()
 
-def main(sample_rate, audio_src):
+""" NOTE: Blocking """
+def run(sample_rate, audio_src, speech_queue):
     language_code = 'en-US'
 
-    t = threading.Thread(target=process_responses)
+    t = threading.Thread(target=process_responses(speech_queue))
     t.start()
 
     client = speech.SpeechClient()
@@ -298,12 +296,3 @@ def main(sample_rate, audio_src):
     speech_queue.put(None)
     speech_queue.put(None)
     t.join()
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        description=__doc__,
-        formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('--rate', default=16000, help='Sample rate.', type=int)
-    parser.add_argument('--audio_src', help='File to simulate streaming of.')
-    args = parser.parse_args()
-    main(args.rate, args.audio_src)
