@@ -10,6 +10,7 @@ def textrecog(text_list):
     keyword = []
     determine = {}
     result = {}
+    empty = []
     for word in text_list:
         if len(word) > 1:
             shorter.append(word)
@@ -55,15 +56,20 @@ def textrecog(text_list):
         elif choose != -1 and determine[choose] == 2:
             if shorter[i] not in result.keys():
                 result[shorter[i]] = shorter[choose]
-    return result
+        if choose == -1:
+            empty.append(shorter[choose])
+    return (result,empty)
 
 def dataprocess(text):
     text_list = text.split()
-    result = textrecog(text_list)
-    result_rev = textrecog(text_list[::-1])
+    result, empty = textrecog(text_list)
+    result_rev, empty_rev = textrecog(text_list[::-1])
     for key in result_rev.keys():
         if key not in result.keys():
             result[key] = result_rev[key]
+    for e in empty:
+        if e not in result.keys():
+            result[e] = True
     return result
 print(dataprocess('I feel bad what your height my height is 180 cm and what about your fevor my fever get worse I get a bad cold I broke my leg'))
- 
+print(dataprocess('I am aspirin'))
