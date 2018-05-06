@@ -10,7 +10,7 @@ import threading
 import time
 import recog
 import queue
-import pickle
+import json
 
 from google.cloud import speech
 from google.cloud.speech import enums
@@ -238,9 +238,9 @@ def process_responses():
             transcript_full = speech_buffer
             result = recog.dataprocess(transcript_full)
             
-            output_file = open('output.log', 'a+')
-            output_file.write("Transcript:" + transcript_full)
-            pickle.dump(result, output_file, protocol=pickle.HIGHEST_PROTOCOL)
+            with open("output.json", "a+") as f:
+                output = json.dumps([transcript_full, result]) + '\n'
+                f.write(output)
             
             speech_queue.task_done()
 

@@ -3,7 +3,7 @@ positive = [x[0:-1].lower() for x in open('positive-words.txt', 'r')]
 negative = [x[0:-1].lower() for x in open('negative-words.txt', 'r')]
 keywords.append('feel')
 freq = ['before','after','meal','1','2','3','4','5','6','7','8','9','10','11','12','per','day','days','hour','hours','minute','once','twice','times','time','daily','15','half']
-test = [x[0:-1] for x in open('drug.txt','r',encoding = 'utf-8',errors = 'ignore')]
+test = [x[0:-1] for x in open("drug.txt", mode='r', errors='ignore')]
 disease = [x[0:-1] for x in open('disease.txt','r',encoding = 'utf-8')]
 
 def textrecog(text_list):
