@@ -8,6 +8,8 @@ import re
 import sys
 import threading
 import time
+import recog
+import queue
 
 from google.cloud import speech
 from google.cloud.speech import enums
@@ -16,6 +18,8 @@ import grpc
 import pyaudio
 from six.moves import queue
 import six
+
+speech_queue = queue.Queue()
 
 def duration_to_secs(duration):
     return duration.seconds + (duration.nanos / float(1e9))
@@ -189,7 +193,7 @@ def _record_keeper(responses, stream):
         yield r
 
 
-def listen_print_loop(responses, stream):
+def listen_print_loop(responses, stream, speech_buffer):
     with_results = (r for r in responses if (
             r.results and r.results[0].alternatives))
     responses = _record_keeper(with_results, stream)
@@ -219,12 +223,32 @@ def listen_print_loop(responses, stream):
 
             num_chars_printed = len(transcript)
         else:
-            print(transcript + overwrite_chars)
-
+            speech_buffer.put(transcript)
             num_chars_printed = 0
+
+def process_responses():
+    while True:
+        speech_buffer = [None, None]
+        speech_buffer[0] = speech_queue.get()
+        speech_buffer[1] = speech_queue.get()
+
+        if None in speech_buffer:
+            break
+        else:
+            transcript_full = speech_buffer[0] + speech_buffer[1]
+            print("Transcript: " + transcript_full)
+            result = recog.dataprocess(transcript_full)
+            print("Keywords: ")
+            for k, v in result.items():
+                print(k, v)
+
+            speech_queue.task_done()
 
 def main(sample_rate, audio_src):
     language_code = 'en-US'
+
+    t = threading.Thread(target=process_responses)
+    t.start()
 
     client = speech.SpeechClient()
     config = types.RecognitionConfig(
@@ -255,7 +279,7 @@ def main(sample_rate, audio_src):
 
             try:
                 # Now, put the transcription responses to use.
-                listen_print_loop(responses, stream)
+                listen_print_loop(responses, stream, speech_queue)
                 break
             except grpc.RpcError as e:
                 if e.code() not in (grpc.StatusCode.INVALID_ARGUMENT,
@@ -271,6 +295,9 @@ def main(sample_rate, audio_src):
 
                 resume = True
 
+    speech_queue.put(None)
+    speech_queue.put(None)
+    t.join()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(

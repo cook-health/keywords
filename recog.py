@@ -1,10 +1,8 @@
-word_book = open('wordlist_selected.txt','r')
-positive_book = open('positive-words.txt','r')
-negative_book = open('negative-words.txt','r')
-keywords = [x[0:-1].lower() for x in word_book]
-positive = [x[0:-1].lower() for x in positive_book]
-negative = [x[0:-1].lower() for x in negative_book]
+keywords = [x[0:-1].lower() for x in open('wordlist_selected.txt', 'r')]
+positive = [x[0:-1].lower() for x in open('positive-words.txt', 'r')]
+negative = [x[0:-1].lower() for x in open('negative-words.txt', 'r')]
 keywords.append('feel')
+
 def textrecog(text_list):
     shorter = []
     keyword = []
@@ -71,5 +69,3 @@ def dataprocess(text):
         if e not in result.keys():
             result[e] = True
     return result
-print(dataprocess('I feel bad what your height my height is 180 cm and what about your fevor my fever get worse I get a bad cold I broke my leg'))
-print(dataprocess('I am aspirin'))
